@@ -1,6 +1,3 @@
-from langsec import SQLSecurityGuard
-from langsec.schema.defaults import low_security_config
-
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -11,6 +8,9 @@ import os
 from cache import MemoryCache
 
 # Create security guard
+from langsec import SQLSecurityGuard
+from langsec.schema.defaults import low_security_config
+
 guard = SQLSecurityGuard(schema=low_security_config)
 
 app = Flask(__name__, static_url_path='')

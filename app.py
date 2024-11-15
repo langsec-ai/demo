@@ -1,11 +1,17 @@
+from langsec import SQLSecurityGuard
+from langsec.schema.defaults import low_security_config
+
 from dotenv import load_dotenv
 load_dotenv()
 
 from functools import wraps
-from flask import Flask, jsonify, Response, request, redirect, url_for
+from flask import Flask, jsonify, Response, request
 import flask
 import os
 from cache import MemoryCache
+
+# Create security guard
+guard = SQLSecurityGuard(schema=low_security_config)
 
 app = Flask(__name__, static_url_path='')
 
@@ -18,13 +24,14 @@ cache = MemoryCache()
 from vanna.remote import VannaDefault
 vn = VannaDefault(model=os.environ['VANNA_MODEL'], api_key=os.environ['VANNA_API_KEY'])
 
-vn.connect_to_snowflake(
-    account=os.environ['SNOWFLAKE_ACCOUNT'],
-    username=os.environ['SNOWFLAKE_USERNAME'],
-    password=os.environ['SNOWFLAKE_PASSWORD'],
-    database=os.environ['SNOWFLAKE_DATABASE'],
-    warehouse=os.environ['SNOWFLAKE_WAREHOUSE'],
-)
+# vn.connect_to_snowflake(
+#     account=os.environ['SNOWFLAKE_ACCOUNT'],
+#     username=os.environ['SNOWFLAKE_USERNAME'],
+#     password=os.environ['SNOWFLAKE_PASSWORD'],
+#     database=os.environ['SNOWFLAKE_DATABASE'],
+#     warehouse=os.environ['SNOWFLAKE_WAREHOUSE'],
+# )
+vn.connect_to_sqlite('https://vanna.ai/Chinook.sqlite')
 
 # NO NEED TO CHANGE ANYTHING BELOW THIS LINE
 def requires_cache(fields):
@@ -81,6 +88,9 @@ def generate_sql():
 @requires_cache(['sql'])
 def run_sql(id: str, sql: str):
     try:
+        # This line does all the magic
+        guard.validate_query(sql)
+
         df = vn.run_sql(sql=sql)
 
         cache.set(id=id, field='df', value=df)

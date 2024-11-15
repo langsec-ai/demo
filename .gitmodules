@@ -1,0 +1,3 @@
+[submodule "langsec"]
+	path = langsec
+	url = git@github.com:langsec-ai/langsec.git

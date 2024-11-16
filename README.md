@@ -1,4 +1,4 @@
-> This repo is a DEMO of Text-To-SQL with security capabilities provided by langsec. Read more 👉 https://docs.lang-sec.com  
+> This repo is a DEMO of Text-To-SQL with security capabilities provided by langsec. Read more 👉 [https://docs.lang-sec.com ](https://docs.lang-sec.com/quick-start/)  
 
 # Overview
 
